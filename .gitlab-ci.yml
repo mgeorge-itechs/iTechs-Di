@@ -1,0 +1,27 @@
+stages:
+  - build
+  
+build_for_cloudflare_pages:
+  stage: build
+  image: node:latest
+  before_script:
+    - apt-get update -y && apt-get install -y zip
+  script:
+    - echo "1. Installing dependencies..."
+    - npm install
+    
+    - echo "2. Compiling the project..."
+    - npm run build
+    
+    - echo "3. Packaging the artifact..."
+    - cd dist
+    - zip -r ../deploy.zip .
+    - cd ../
+  artifacts:
+    paths:
+      - deploy.zip
+    expire_in: 1 week
+  tags:
+    - dev
+  only:
+    - dev
